@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "42701b43-f56d-42d1-bb41-49067d80b3cd",
+		"name": "oauth2_learning",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "list client",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/oauth/clients",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"oauth",
+						"clients"
+					]
+				},
+				"description": "list all oauth2 clients\n"
+			},
+			"response": []
+		},
+		{
+			"name": "grant user with token (Password Grant Client)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let {access_token, refresh_token} = pm.response.json();",
+							"pm.collectionVariables.set(\"access_token\", access_token)",
+							"pm.collectionVariables.set(\"refresh_token\", refresh_token)",
+							"",
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"",
+							"pm.test(\"make sure access_token in collection var is updated\", () => {",
+							"    let access_token_var = pm.collectionVariables.get(\"access_token\");",
+							"    let refresh_token_var = pm.collectionVariables.get(\"refresh_token\");",
+							"    pm.expect(access_token).eq(access_token_var)",
+							"})",
+							"",
+							"pm.test(\"make sure refresh_token in collection var is updated\", () => {",
+							"    let refresh_token_var = pm.collectionVariables.get(\"refresh_token\");",
+							"    pm.expect(refresh_token).eq(refresh_token_var)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "oreilly.korey@example.net",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/oauth/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list users (via token auth)",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/user",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refresh_token}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/oauth/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "username",
+				"value": "oreilly.korey@example.net",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "{{base_url}}/oauth/token",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "password based",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "password_credentials",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "headerPrefix",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({key: 'Accept', value: 'application/json'});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://andvid.test"
+		},
+		{
+			"key": "client_id",
+			"value": "4"
+		},
+		{
+			"key": "client_secret",
+			"value": "A9AYRuwGbQKzzW8juD8eWsjpZ3AbRa8ORDmMiq6X"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		}
+	]
+}
